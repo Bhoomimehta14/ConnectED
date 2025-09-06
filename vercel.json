@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/connected-login.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
