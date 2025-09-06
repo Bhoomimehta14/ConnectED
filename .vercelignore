@@ -10,6 +10,9 @@ campusrebel/
 campus-rebel/
 node_modules/
 
+# Development server (only for local dev)
+server.js
+
 # Development files
 *.config.*
 .eslintrc*
