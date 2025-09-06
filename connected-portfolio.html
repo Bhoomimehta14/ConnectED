@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - ConnectED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1E1E1E 100%);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigation */
+        .nav-header {
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .menu-toggle {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: white;
+        }
+
+        /* Portfolio Header */
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .portfolio-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED, #06B6D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portfolio-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 0.8rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            color: #fff;
+            border: none;
+        }
+
+        /* Club Cards Grid */
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .club-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .club-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .club-banner {
+            height: 150px;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .club-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .club-logo {
+            position: absolute;
+            bottom: -30px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #7C3AED, #06B6D4);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 4px solid #1E1E1E;
+        }
+
+        .club-content {
+            padding: 2.5rem 1.5rem 1.5rem;
+        }
+
+        .club-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .club-description {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .club-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .club-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #3B82F6;
+        }
+
+        .club-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-join {
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            color: #fff;
+        }
+
+        .btn-join:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-remove {
+            background: rgba(248, 113, 113, 0.2);
+            color: #F87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-remove:hover {
+            background: rgba(248, 113, 113, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .empty-description {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        .btn-discover {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-discover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* SOP Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .sop-input {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: #fff;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .portfolio-header h1 {
+                font-size: 2rem;
+            }
+
+            .clubs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="200" rx="40" fill="#0A1628"/>
+                    <defs>
+                        <linearGradient id="tealGradient6" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="turquoiseGradient6" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="greenGradient6" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(100, 100)">
+                        <path d="M -35,-35 Q -35,0 0,0 T 35,35 Q 35,0 0,0 T -35,-35" fill="none" stroke="url(#tealGradient6)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                        <path d="M 35,-35 Q 35,0 0,0 T -35,35 Q -35,0 0,0 T 35,-35" fill="none" stroke="url(#turquoiseGradient6)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                        <circle cx="0" cy="0" r="12" fill="url(#greenGradient6)" opacity="1"/>
+                        <circle cx="-35" cy="-35" r="6" fill="#14B8A6"/>
+                        <circle cx="35" cy="-35" r="6" fill="#06B6D4"/>
+                        <circle cx="-35" cy="35" r="6" fill="#06B6D4"/>
+                        <circle cx="35" cy="35" r="6" fill="#10B981"/>
+                    </g>
+                </svg>
+                <span>ConnectED</span>
+            </div>
+            <div class="nav-links">
+                <a href="connected-discovery.html" class="nav-link">🔍 Discovery</a>
+                <a href="connected-portfolio.html" class="nav-link active">📂 Portfolio</a>
+                <a href="connected-ai-helper.html" class="nav-link">🤖 AI Helper</a>
+                
+                <div class="dropdown-container">
+                    <div class="menu-toggle" onclick="toggleDropdown()" title="More options">⋮</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="window.location.href='connected-profile.html'">
+                            👤 Profile
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-inbox.html'">
+                            💬 Inbox
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-gamification.html'">
+                            🎮 Games
+                        </div>
+                        <div class="dropdown-item" onclick="localStorage.clear(); window.location.href='connected-login.html'">
+                            🚪 Logout
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Portfolio Header -->
+        <div class="portfolio-header">
+            <h1>Your Portfolio</h1>
+            <p>Clubs you're interested in joining</p>
+        </div>
+
+        <!-- Clubs Grid -->
+        <div id="interestedClubs" class="clubs-grid">
+            <!-- Clubs will be populated here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">📂</div>
+            <h2 class="empty-title">No clubs in your portfolio yet</h2>
+            <p class="empty-description">Start exploring and mark clubs you're interested in!</p>
+            <a href="connected-discovery.html" class="btn-discover">Explore Clubs</a>
+        </div>
+    </div>
+
+    <!-- SOP Modal -->
+    <div id="sopModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Join <span id="clubNameModal"></span></h2>
+                <p>Tell us why you want to join this club</p>
+            </div>
+            <textarea 
+                id="sopText" 
+                class="sop-input" 
+                placeholder="Write your statement of purpose here..."
+            ></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-remove" onclick="closeSopModal()">Cancel</button>
+                <button class="btn btn-join" onclick="submitJoinRequest()">Submit Application</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentClub = '';
+
+        // Club data (simulated - in real app would fetch from backend)
+        const clubsData = {
+            'Tech Club': {
+                description: 'Explore cutting-edge technology and build innovative projects',
+                members: 156,
+                events: 24,
+                tags: ['AI/ML', 'Web Dev', 'Mobile'],
+                icon: '💻'
+            },
+            'Photography Club': {
+                description: 'Capture moments and master the art of visual storytelling',
+                members: 89,
+                events: 18,
+                tags: ['DSLR', 'Editing', 'Portraits'],
+                icon: '📸'
+            },
+            'Dance Club': {
+                description: 'Express yourself through movement and rhythm',
+                members: 124,
+                events: 32,
+                tags: ['Hip-Hop', 'Contemporary', 'Classical'],
+                icon: '💃'
+            },
+            'Literature Club': {
+                description: 'Dive into the world of words, poetry, and creative writing',
+                members: 67,
+                events: 15,
+                tags: ['Poetry', 'Fiction', 'Book Club'],
+                icon: '📖'
+            },
+            'Music Club': {
+                description: 'Create, perform, and appreciate all forms of music',
+                members: 145,
+                events: 28,
+                tags: ['Band', 'Classical', 'Production'],
+                icon: '🎵'
+            },
+            'Entrepreneurship Club': {
+                description: 'Turn ideas into reality and build the next big startup',
+                members: 98,
+                events: 20,
+                tags: ['Startups', 'Business', 'Innovation'],
+                icon: '🚀'
+            }
+        };
+
+        function loadPortfolio() {
+            const interestedClubs = JSON.parse(localStorage.getItem('interestedClubs') || '[]');
+
+            const container = document.getElementById('interestedClubs');
+            const emptyState = document.getElementById('emptyState');
+
+            if (interestedClubs.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                container.style.display = 'grid';
+                emptyState.style.display = 'none';
+                
+                container.innerHTML = interestedClubs.map(clubName => {
+                    const club = clubsData[clubName] || {
+                        description: 'An exciting club to explore your interests',
+                        members: Math.floor(Math.random() * 200) + 50,
+                        events: Math.floor(Math.random() * 30) + 10,
+                        tags: ['Community', 'Learning'],
+                        icon: '🎯'
+                    };
+
+                    return `
+                        <div class="club-card">
+                            <div class="club-banner">
+                                <div class="club-logo">${club.icon}</div>
+                            </div>
+                            <div class="club-content">
+                                <h3 class="club-name">${clubName}</h3>
+                                <p class="club-description">${club.description}</p>
+                                <div class="club-stats">
+                                    <div class="stat">
+                                        <span>👥</span>
+                                        <span>${club.members} members</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span>📅</span>
+                                        <span>${club.events} events</span>
+                                    </div>
+                                </div>
+                                <div class="club-tags">
+                                    ${club.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
+                                <div class="club-actions">
+                                    <button class="btn btn-join" onclick="openSopModal('${clubName}')">Join Club</button>
+                                    <button class="btn btn-remove" onclick="removeFromPortfolio('${clubName}')">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+
+        function removeFromPortfolio(clubName) {
+            let interestedClubs = JSON.parse(localStorage.getItem('interestedClubs') || '[]');
+            interestedClubs = interestedClubs.filter(club => club !== clubName);
+            localStorage.setItem('interestedClubs', JSON.stringify(interestedClubs));
+            loadPortfolio();
+        }
+
+        function openSopModal(clubName) {
+            currentClub = clubName;
+            document.getElementById('clubNameModal').textContent = clubName;
+            document.getElementById('sopModal').classList.add('active');
+        }
+
+        function closeSopModal() {
+            document.getElementById('sopModal').classList.remove('active');
+            document.getElementById('sopText').value = '';
+        }
+
+        function submitJoinRequest() {
+            const sop = document.getElementById('sopText').value;
+            if (!sop.trim()) {
+                alert('Please write your statement of purpose');
+                return;
+            }
+
+            // Move from interested to joined clubs
+            let interestedClubs = JSON.parse(localStorage.getItem('interestedClubs') || '[]');
+            let joinedClubs = JSON.parse(localStorage.getItem('joinedClubs') || '[]');
+            
+            interestedClubs = interestedClubs.filter(club => club !== currentClub);
+            if (!joinedClubs.includes(currentClub)) {
+                joinedClubs.push(currentClub);
+            }
+            
+            localStorage.setItem('interestedClubs', JSON.stringify(interestedClubs));
+            localStorage.setItem('joinedClubs', JSON.stringify(joinedClubs));
+
+            // Add to inbox
+            let inbox = JSON.parse(localStorage.getItem('inbox') || '[]');
+            inbox.push({
+                id: Date.now(),
+                type: 'club_joined',
+                from: currentClub,
+                message: `Welcome to ${currentClub}! You're now a member.`,
+                sop: sop,
+                timestamp: new Date().toISOString(),
+                status: 'joined'
+            });
+            localStorage.setItem('inbox', JSON.stringify(inbox));
+
+            closeSopModal();
+            alert(`You've successfully joined ${currentClub}! Check your inbox to connect with club members.`);
+            loadPortfolio();
+        }
+
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdownContainer = document.querySelector('.dropdown-container');
+            const dropdown = document.getElementById('dropdownMenu');
+            
+            if (!dropdownContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Load portfolio on page load
+        window.addEventListener('DOMContentLoaded', loadPortfolio);
+    </script>
+</body>
+</html>

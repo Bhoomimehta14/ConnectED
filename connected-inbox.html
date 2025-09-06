@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox - ConnectED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #0F0F0F 0%, #1E1E1E 100%);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Navigation */
+        .nav-header {
+            background: rgba(30, 30, 30, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .menu-toggle {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: white;
+        }
+
+        /* Inbox Layout */
+        .inbox-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Conversations List */
+        .conversations-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversations-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .conversations-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .conversation-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .conversation-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .conversation-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .conversation-preview {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .conversation-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .unread-badge {
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Chat Area */
+        .chat-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #7C3AED, #06B6D4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-status {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-action-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1rem 1.25rem;
+            border-radius: 15px;
+            border-top-left-radius: 5px;
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(124, 58, 237, 0.3));
+            border-top-left-radius: 15px;
+            border-top-right-radius: 5px;
+        }
+
+        .message-text {
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 0.5rem;
+        }
+
+        .message-input-area {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Empty State */
+        .empty-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .inbox-container {
+                grid-template-columns: 1fr;
+            }
+
+            .conversations-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="200" rx="40" fill="#0A1628"/>
+                    <defs>
+                        <linearGradient id="tealGradient7" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="turquoiseGradient7" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="greenGradient7" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <g transform="translate(100, 100)">
+                        <path d="M -35,-35 Q -35,0 0,0 T 35,35 Q 35,0 0,0 T -35,-35" fill="none" stroke="url(#tealGradient7)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                        <path d="M 35,-35 Q 35,0 0,0 T -35,35 Q -35,0 0,0 T 35,-35" fill="none" stroke="url(#turquoiseGradient7)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                        <circle cx="0" cy="0" r="12" fill="url(#greenGradient7)" opacity="1"/>
+                        <circle cx="-35" cy="-35" r="6" fill="#14B8A6"/>
+                        <circle cx="35" cy="-35" r="6" fill="#06B6D4"/>
+                        <circle cx="-35" cy="35" r="6" fill="#06B6D4"/>
+                        <circle cx="35" cy="35" r="6" fill="#10B981"/>
+                    </g>
+                </svg>
+                <span>ConnectED</span>
+            </div>
+            <div class="nav-links">
+                <a href="connected-discovery.html" class="nav-link">🔍 Discovery</a>
+                <a href="connected-portfolio.html" class="nav-link">📂 Portfolio</a>
+                <a href="connected-ai-helper.html" class="nav-link">🤖 AI Helper</a>
+                
+                <div class="dropdown-container">
+                    <div class="menu-toggle" onclick="toggleDropdown()" title="More options">⋮</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="window.location.href='connected-profile.html'">
+                            👤 Profile
+                        </div>
+                        <div class="dropdown-item active" onclick="window.location.href='connected-inbox.html'">
+                            💬 Inbox
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-gamification.html'">
+                            🎮 Games
+                        </div>
+                        <div class="dropdown-item" onclick="localStorage.clear(); window.location.href='connected-login.html'">
+                            🚪 Logout
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Inbox Container -->
+        <div class="inbox-container">
+            <!-- Conversations Panel -->
+            <div class="conversations-panel">
+                <div class="conversations-header">
+                    <h2>Messages</h2>
+                    <input type="text" class="search-box" placeholder="Search conversations...">
+                </div>
+                <div class="conversations-list" id="conversationsList">
+                    <!-- Conversations will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div id="emptyChatState" class="empty-chat">
+                    <div class="empty-icon">💬</div>
+                    <h3>Select a conversation</h3>
+                    <p>Choose a conversation from the left to start messaging</p>
+                </div>
+
+                <div id="chatContent" style="display: none; height: 100%;">
+                    <div class="chat-header">
+                        <div class="chat-avatar" id="chatAvatar">🎯</div>
+                        <div class="chat-info">
+                            <div class="chat-name" id="chatName">Select a conversation</div>
+                            <div class="chat-status" id="chatStatus">Active now</div>
+                        </div>
+                        <div class="chat-actions">
+                            <div class="chat-action-btn">📞</div>
+                            <div class="chat-action-btn">📹</div>
+                            <div class="chat-action-btn">ℹ️</div>
+                        </div>
+                    </div>
+                    <div class="messages-area" id="messagesArea">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="message-input-area">
+                        <input type="text" class="message-input" id="messageInput" placeholder="Type a message...">
+                        <button class="send-btn" onclick="sendMessage()">
+                            <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChat = null;
+        let conversations = [];
+        let messages = {};
+
+        function getClubIcon(clubName) {
+            const clubIcons = {
+                'Tech Club': '💻',
+                'Photography Club': '📸',
+                'Dance Club': '💃',
+                'Literature Club': '📖',
+                'Music Club': '🎵',
+                'Entrepreneurship Club': '🚀',
+                'Sports Club': '⚽',
+                'Art Club': '🎨',
+                'Drama Club': '🎭'
+            };
+            return clubIcons[clubName] || '🎯';
+        }
+
+        function initializeInbox() {
+            // Load inbox data from localStorage
+            const connectedPeers = JSON.parse(localStorage.getItem('connectedPeers') || '[]');
+            const joinedClubs = JSON.parse(localStorage.getItem('joinedClubs') || '[]');
+
+            // Create conversations from different sources
+            conversations = [];
+
+            // Add joined clubs
+            joinedClubs.forEach(club => {
+                conversations.push({
+                    id: `club-${club}`,
+                    name: club,
+                    avatar: getClubIcon(club),
+                    preview: 'Welcome to the club! Check out our upcoming events.',
+                    time: 'Yesterday',
+                    unread: Math.random() > 0.5 ? 1 : 0,
+                    type: 'club'
+                });
+            });
+
+            // Add connected peers
+            connectedPeers.forEach(peer => {
+                conversations.push({
+                    id: `peer-${peer}`,
+                    name: peer,
+                    avatar: '👤',
+                    preview: 'Hey! Let\'s connect and collaborate!',
+                    time: '2h ago',
+                    unread: Math.random() > 0.5 ? 1 : 0,
+                    type: 'peer'
+                });
+            });
+
+            // Always add ConnectED Team message
+            conversations.unshift({
+                id: 'connectED-team',
+                name: 'ConnectED Team',
+                avatar: '📚',
+                preview: 'Welcome to ConnectED! Join clubs and connect with peers to expand your network.',
+                time: 'Pinned',
+                unread: 0,
+                type: 'system'
+            });
+
+            // Initialize sample messages
+            conversations.forEach(conv => {
+                if (conv.id === 'connectED-team') {
+                    messages[conv.id] = [
+                        {
+                            id: 1,
+                            sender: 'ConnectED Team',
+                            text: 'Welcome to ConnectED! 🎉',
+                            time: '2 days ago',
+                            sent: false
+                        },
+                        {
+                            id: 2,
+                            sender: 'ConnectED Team',
+                            text: 'This platform helps you discover clubs, connect with peers, and grow your campus network.',
+                            time: '2 days ago',
+                            sent: false
+                        },
+                        {
+                            id: 3,
+                            sender: 'ConnectED Team',
+                            text: 'Start by exploring the Discovery page to find clubs that match your interests!',
+                            time: '2 days ago',
+                            sent: false
+                        }
+                    ];
+                } else {
+                    messages[conv.id] = [
+                        {
+                            id: 1,
+                            sender: conv.name,
+                            text: conv.preview,
+                            time: conv.time,
+                            sent: false
+                        }
+                    ];
+                }
+            });
+
+            renderConversations();
+        }
+
+        function renderConversations() {
+            const list = document.getElementById('conversationsList');
+            list.innerHTML = conversations.map(conv => `
+                <div class="conversation-item ${currentChat === conv.id ? 'active' : ''}" 
+                     onclick="selectConversation('${conv.id}')">
+                    <div class="conversation-avatar">${conv.avatar}</div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">${conv.name}</div>
+                        <div class="conversation-preview">${conv.preview}</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">${conv.time}</div>
+                        ${conv.unread > 0 ? `<div class="unread-badge">${conv.unread}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectConversation(id) {
+            currentChat = id;
+            const conv = conversations.find(c => c.id === id);
+            
+            // Mark as read
+            conv.unread = 0;
+            
+            // Show chat content
+            document.getElementById('emptyChatState').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'flex';
+            document.getElementById('chatContent').style.flexDirection = 'column';
+            
+            // Update chat header
+            document.getElementById('chatAvatar').textContent = conv.avatar;
+            document.getElementById('chatName').textContent = conv.name;
+            document.getElementById('chatStatus').textContent = conv.type === 'club' ? 
+                'Club Community' : 'Active 5m ago';
+            
+            // Render messages
+            renderMessages();
+            renderConversations();
+        }
+
+        function renderMessages() {
+            const messagesArea = document.getElementById('messagesArea');
+            const chatMessages = messages[currentChat] || [];
+            
+            messagesArea.innerHTML = chatMessages.map(msg => `
+                <div class="message ${msg.sent ? 'sent' : ''}">
+                    <div class="message-avatar">
+                        ${msg.sent ? '👤' : conversations.find(c => c.id === currentChat).avatar}
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            <div class="message-text">${msg.text}</div>
+                        </div>
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Scroll to bottom
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text || !currentChat) return;
+            
+            // Add message
+            if (!messages[currentChat]) {
+                messages[currentChat] = [];
+            }
+            
+            messages[currentChat].push({
+                id: Date.now(),
+                sender: 'You',
+                text: text,
+                time: 'Just now',
+                sent: true
+            });
+            
+            // Update conversation preview
+            const conv = conversations.find(c => c.id === currentChat);
+            conv.preview = text;
+            conv.time = 'Just now';
+            
+            // Clear input
+            input.value = '';
+            
+            // Render updates
+            renderMessages();
+            renderConversations();
+            
+            // Simulate reply after 2 seconds
+            setTimeout(() => {
+                const replies = [
+                    "That sounds great! Let's discuss this further.",
+                    "I totally agree with your perspective!",
+                    "Looking forward to collaborating with you!",
+                    "Thanks for reaching out! When can we meet?",
+                    "Awesome! Count me in for the project."
+                ];
+                
+                messages[currentChat].push({
+                    id: Date.now(),
+                    sender: conv.name,
+                    text: replies[Math.floor(Math.random() * replies.length)],
+                    time: 'Just now',
+                    sent: false
+                });
+                
+                conv.preview = messages[currentChat][messages[currentChat].length - 1].text;
+                conv.unread = currentChat === currentChat ? 0 : 1;
+                
+                renderMessages();
+                renderConversations();
+            }, 2000);
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return 'Yesterday';
+        }
+
+        // Handle enter key for sending messages
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize on load
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdownContainer = document.querySelector('.dropdown-container');
+            const dropdown = document.getElementById('dropdownMenu');
+            
+            if (!dropdownContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', initializeInbox);
+    </script>
+</body>
+</html>

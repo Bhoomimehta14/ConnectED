@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canteen Queue Management System</title>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .queue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .queue-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .queue-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .queue-type {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .queue-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .queue-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .wait-time {
+            color: #666;
+            margin: 10px 0;
+        }
+        
+        .join-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        .join-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .menu-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .menu-item {
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .menu-item:hover {
+            border-color: #667eea;
+        }
+        
+        .menu-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item-price {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+        
+        .order-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .status-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .status-bar.active {
+            display: block;
+        }
+        
+        .token-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .token-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .abandon-btn {
+            padding: 8px 20px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            animation: slideIn 0.3s;
+        }
+        
+        .notification.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Campus Canteen Queue System</h1>
+            <p>Skip the wait, join the smart queue!</p>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            <div class="token-info">
+                <div>
+                    <div class="token-number" id="tokenNumber">Token: -</div>
+                    <div id="queuePosition">Position: -</div>
+                    <div id="estimatedTime">Est. Time: -</div>
+                </div>
+                <button class="abandon-btn" onclick="abandonQueue()">Leave Queue</button>
+            </div>
+        </div>
+
+        <div class="queue-grid">
+            <div class="queue-card">
+                <div class="queue-type">
+                    <span class="queue-name">⚡ Express Lane</span>
+                    <span class="queue-count" id="express-count">0</span>
+                </div>
+                <div class="wait-time">Pre-orders only • ~30 sec pickup</div>
+                <button class="join-btn" onclick="joinQueue('express')">Join Express Queue</button>
+            </div>
+
+            <div class="queue-card">
+                <div class="queue-type">
+                    <span class="queue-name">🥪 Quick Grab</span>
+                    <span class="queue-count" id="quickGrab-count">0</span>
+                </div>
+                <div class="wait-time">Ready items • ~2 min wait</div>
+                <button class="join-btn" onclick="joinQueue('quickGrab')">Join Quick Grab</button>
+            </div>
+
+            <div class="queue-card">
+                <div class="queue-type">
+                    <span class="queue-name">🍛 Regular Orders</span>
+                    <span class="queue-count" id="regular-count">0</span>
+                </div>
+                <div class="wait-time">Fresh meals • ~5 min wait</div>
+                <button class="join-btn" onclick="joinQueue('regular')">Join Regular Queue</button>
+            </div>
+
+            <div class="queue-card">
+                <div class="queue-type">
+                    <span class="queue-name">☕ Beverages</span>
+                    <span class="queue-count" id="beverage-count">0</span>
+                </div>
+                <div class="wait-time">Drinks only • ~1 min wait</div>
+                <button class="join-btn" onclick="joinQueue('beverage')">Join Beverage Queue</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <h2>📋 Today's Menu</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCustomers">0</div>
+                    <div class="stat-label">Total in Queue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgWaitTime">0</div>
+                    <div class="stat-label">Avg Wait (min)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeCounters">4</div>
+                    <div class="stat-label">Active Counters</div>
+                </div>
+            </div>
+            
+            <div class="menu-grid" id="menuGrid">
+                <!-- Menu items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Connect to server
+        const socket = io('http://localhost:5000');
+        let currentToken = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            fetchQueueStatus();
+        });
+
+        // Socket event listeners
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            showNotification('Connected to queue system', 'success');
+        });
+
+        socket.on('queue:update', (data) => {
+            updateQueueDisplay(data);
+        });
+
+        socket.on('queue:joined', (token) => {
+            currentToken = token;
+            updateTokenDisplay(token);
+            showNotification(`Joined queue! Your token: ${token.id}`, 'success');
+        });
+
+        socket.on('queue:call', (data) => {
+            if (currentToken && data.tokenId === currentToken.id) {
+                showNotification(data.message, 'alert');
+                playNotificationSound();
+            }
+        });
+
+        socket.on('queue:metrics', (data) => {
+            updateMetrics(data);
+        });
+
+        // Join queue function
+        function joinQueue(queueType) {
+            if (currentToken) {
+                showNotification('You are already in a queue!', 'error');
+                return;
+            }
+
+            const userId = 'USER_' + Date.now();
+            
+            socket.emit('queue:join', {
+                userId: userId,
+                queueType: queueType,
+                orderDetails: {}
+            });
+        }
+
+        // Abandon queue
+        function abandonQueue() {
+            if (!currentToken) return;
+
+            fetch(`http://localhost:5000/api/queue/abandon/${currentToken.id}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentToken = null;
+                    document.getElementById('statusBar').classList.remove('active');
+                    showNotification('Left the queue', 'info');
+                }
+            });
+        }
+
+        // Fetch queue status
+        function fetchQueueStatus() {
+            fetch('http://localhost:5000/api/queue/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Object.keys(data.data).forEach(queueType => {
+                            document.getElementById(`${queueType}-count`).textContent = 
+                                data.data[queueType].length;
+                        });
+                    }
+                });
+        }
+
+        // Load menu
+        function loadMenu() {
+            fetch('http://localhost:5000/api/orders/menu')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayMenu(data.data);
+                    }
+                });
+        }
+
+        // Display menu items
+        function displayMenu(menu) {
+            const menuGrid = document.getElementById('menuGrid');
+            const allItems = [...menu.meals, ...menu.quickGrab, ...menu.beverages];
+            
+            menuGrid.innerHTML = allItems.map(item => `
+                <div class="menu-item">
+                    <div class="menu-item-name">${item.name}</div>
+                    <div class="menu-item-price">₹${item.price}</div>
+                    <button class="order-btn" onclick="orderItem('${item.id}')">Order</button>
+                </div>
+            `).join('');
+        }
+
+        // Order item
+        function orderItem(itemId) {
+            showNotification('Order functionality coming soon!', 'info');
+        }
+
+        // Update queue display
+        function updateQueueDisplay(data) {
+            if (data.queues) {
+                Object.keys(data.queues).forEach(queueType => {
+                    const count = data.queues[queueType].length || data.queues[queueType];
+                    document.getElementById(`${queueType}-count`).textContent = count;
+                });
+            }
+        }
+
+        // Update token display
+        function updateTokenDisplay(token) {
+            document.getElementById('statusBar').classList.add('active');
+            document.getElementById('tokenNumber').textContent = `Token: ${token.id}`;
+            document.getElementById('queuePosition').textContent = `Position: ${token.position}`;
+            document.getElementById('estimatedTime').textContent = 
+                `Est. Time: ${token.estimatedTime.minutes} min`;
+        }
+
+        // Update metrics
+        function updateMetrics(data) {
+            if (data.totalCustomers !== undefined) {
+                document.getElementById('totalCustomers').textContent = data.totalCustomers;
+            }
+            
+            // Calculate average wait time
+            if (data.queues) {
+                const avgWait = Object.values(data.queues)
+                    .reduce((sum, q) => sum + (q.estimatedWait || 0), 0) / 4;
+                document.getElementById('avgWaitTime').textContent = Math.round(avgWait);
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification show';
+            
+            if (type === 'error') {
+                notification.style.background = '#ff4757';
+                notification.style.color = 'white';
+            } else if (type === 'alert') {
+                notification.style.background = '#ffa502';
+                notification.style.color = 'white';
+            } else {
+                notification.style.background = 'white';
+                notification.style.color = '#333';
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Play notification sound
+        function playNotificationSound() {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDGGy/DQgTYGLnO97OOiWBELS');
+            audio.play();
+        }
+
+        // Auto-refresh queue status every 10 seconds
+        setInterval(fetchQueueStatus, 10000);
+    </script>
+</body>
+</html>

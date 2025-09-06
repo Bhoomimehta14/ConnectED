@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-primary: #3B82F6;
+    --brand-secondary: #7C3AED;
+    --brand-accent: #06B6D4;
+    --brand-coral: #F87171;
+    --brand-yellow: #FACC15;
+    --brand-dark: #0F0F0F;
+    --brand-gray: #1E1E1E;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-brand-dark text-white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-input {
+    @apply w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl 
+           text-white placeholder-white/40 transition-all duration-200
+           focus:bg-white/10 focus:border-brand-primary focus:outline-none
+           focus:ring-2 focus:ring-brand-primary/20;
+  }
+
+  .brand-button {
+    @apply relative px-6 py-3 bg-brand-gradient rounded-xl font-semibold
+           text-white transition-all duration-300 overflow-hidden
+           hover:shadow-lg hover:shadow-brand-primary/25 hover:-translate-y-0.5
+           active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .role-card {
+    @apply p-6 bg-white/5 border border-white/10 rounded-xl
+           transition-all duration-300 cursor-pointer
+           hover:bg-white/10 hover:border-white/20 hover:-translate-y-1;
+  }
+
+  .role-card.selected {
+    @apply bg-brand-gradient border-white/30 shadow-lg shadow-brand-primary/20;
+  }
+}
+
+@layer utilities {
+  .animate-gradient-xy {
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-brand-gradient;
+  }
+
+  .glass-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-gray rounded-lg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-primary rounded-lg;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-secondary;
+}

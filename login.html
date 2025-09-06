@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusRebel - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            min-height: 100vh;
+            background: #0F0F0F;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Animated gradient background */
+        .animated-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #0F0F0F, #1E1E1E, #3B82F6, #7C3AED);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .orb1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(59, 130, 246, 0.3);
+            top: -150px;
+            right: -100px;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(124, 58, 237, 0.3);
+            bottom: -200px;
+            left: -150px;
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            animation: logoSpring 0.6s ease-out;
+        }
+
+        @keyframes logoSpring {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .logo-icon {
+            font-size: 40px;
+        }
+
+        .logo-text {
+            font-size: 42px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .glass-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Role selector */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .role-btn {
+            padding: 20px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .role-btn.selected {
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            border-color: rgba(255, 255, 255, 0.3);
+            animation: selectPulse 0.3s ease;
+        }
+
+        @keyframes selectPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .role-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .role-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Glow button */
+        .glow-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3B82F6, #7C3AED);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .glow-button:active {
+            transform: translateY(0);
+        }
+
+        .glow-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success message */
+        .success-msg {
+            display: none;
+            padding: 12px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            border-radius: 8px;
+            color: #22c55e;
+            text-align: center;
+            margin-top: 20px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .success-msg.show {
+            display: block;
+        }
+
+        /* OAuth section */
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        .oauth-text {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .oauth-text:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <div class="glass-card">
+        <div class="logo-container">
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <span class="logo-text">CampusRebel</span>
+            </div>
+            <p class="tagline">Connect. Collaborate. Create.</p>
+        </div>
+
+        <h2 style="margin-bottom: 25px; font-size: 24px;">Welcome Back!</h2>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="sapId">SAP ID</label>
+                <input 
+                    type="text" 
+                    id="sapId" 
+                    class="glass-input" 
+                    placeholder="70522400089"
+                    maxlength="11"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Select Your Role</label>
+                <div class="role-grid">
+                    <div class="role-btn" data-role="student">
+                        <div class="role-icon">👨‍🎓</div>
+                        <div class="role-label">Student</div>
+                    </div>
+                    <div class="role-btn" data-role="club_head">
+                        <div class="role-icon">👥</div>
+                        <div class="role-label">Club Head</div>
+                    </div>
+                    <div class="role-btn" data-role="faculty">
+                        <div class="role-icon">👨‍🏫</div>
+                        <div class="role-label">Faculty</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="glow-button" id="loginBtn" disabled>
+                <span id="btnText">Login</span>
+            </button>
+        </form>
+
+        <div class="divider">OR</div>
+        <div class="oauth-text">Login with Google / Microsoft</div>
+
+        <div class="success-msg" id="successMsg">
+            Login successful! Redirecting...
+        </div>
+    </div>
+
+    <script>
+        // Initialize local storage with sample data if not exists
+        if (!localStorage.getItem('campusRebelUsers')) {
+            const sampleUsers = [
+                { sapId: '70522400089', name: 'John Doe', role: 'student' },
+                { sapId: '70522400090', name: 'Jane Smith', role: 'club_head' },
+                { sapId: '70522400091', name: 'Dr. Robert', role: 'faculty' }
+            ];
+            localStorage.setItem('campusRebelUsers', JSON.stringify(sampleUsers));
+        }
+
+        // Role selection
+        let selectedRole = '';
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const loginBtn = document.getElementById('loginBtn');
+        const sapIdInput = document.getElementById('sapId');
+
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                roleBtns.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedRole = this.dataset.role;
+                checkFormValidity();
+            });
+        });
+
+        // Check form validity
+        function checkFormValidity() {
+            const sapId = sapIdInput.value.trim();
+            if (sapId && selectedRole) {
+                loginBtn.disabled = false;
+            } else {
+                loginBtn.disabled = true;
+            }
+        }
+
+        sapIdInput.addEventListener('input', checkFormValidity);
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const sapId = sapIdInput.value.trim();
+            const btnText = document.getElementById('btnText');
+            const successMsg = document.getElementById('successMsg');
+            
+            // Show loading state
+            btnText.innerHTML = '<span class="spinner"></span>Logging in...';
+            loginBtn.disabled = true;
+            
+            // Simulate login process
+            setTimeout(() => {
+                // Store current user in localStorage
+                const currentUser = {
+                    sapId: sapId,
+                    role: selectedRole,
+                    loginTime: new Date().toISOString()
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Get all users
+                const users = JSON.parse(localStorage.getItem('campusRebelUsers') || '[]');
+                
+                // Check if user exists, if not add them
+                const existingUser = users.find(u => u.sapId === sapId);
+                if (!existingUser) {
+                    users.push({
+                        sapId: sapId,
+                        name: `User ${sapId.slice(-4)}`,
+                        role: selectedRole
+                    });
+                    localStorage.setItem('campusRebelUsers', JSON.stringify(users));
+                }
+                
+                // Show success message
+                successMsg.classList.add('show');
+                btnText.textContent = 'Login Successful!';
+                
+                // Log to console for debugging
+                console.log('Login successful!', currentUser);
+                console.log('All users:', users);
+                
+                // Simulate redirect
+                setTimeout(() => {
+                    alert(`Welcome ${selectedRole === 'student' ? 'Student' : selectedRole === 'club_head' ? 'Club Head' : 'Faculty'}!\n\nYou would be redirected to the ${selectedRole === 'student' ? 'Interest Selection' : 'Dashboard'} page.`);
+                    
+                    // Reset form
+                    sapIdInput.value = '';
+                    roleBtns.forEach(b => b.classList.remove('selected'));
+                    selectedRole = '';
+                    btnText.textContent = 'Login';
+                    loginBtn.disabled = true;
+                    successMsg.classList.remove('show');
+                }, 1500);
+            }, 1500);
+        });
+
+        // OAuth login simulation
+        document.querySelector('.oauth-text').addEventListener('click', function() {
+            alert('OAuth login would open Google/Microsoft authentication window');
+        });
+
+        // Display stored data in console on load
+        console.log('Stored Users:', JSON.parse(localStorage.getItem('campusRebelUsers') || '[]'));
+        console.log('Current User:', JSON.parse(localStorage.getItem('currentUser') || 'null'));
+    </script>
+</body>
+</html>

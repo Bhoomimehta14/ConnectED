@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniBuddy - AI Assistant - ConnectED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #3B82F6;
+            --primary-purple: #7C3AED;
+            --secondary-turquoise: #06B6D4;
+            --secondary-teal: #14B8A6;
+            --secondary-green: #10B981;
+            --secondary-coral: #F87171;
+            --accent-yellow: #FACC15;
+            --bg-dark: #0A1628;
+            --bg-gray: #1A2332;
+            --gradient-1: linear-gradient(135deg, #14B8A6, #06B6D4);
+            --gradient-2: linear-gradient(135deg, #06B6D4, #10B981);
+            --gradient-3: linear-gradient(135deg, #14B8A6, #06B6D4, #10B981);
+            --gradient-4: linear-gradient(135deg, #3B82F6, #7C3AED);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A1628 0%, #1A2332 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-icon.active {
+            background: var(--gradient-1);
+            border: none;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .menu-toggle {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 44px;
+            height: 44px;
+            color: white;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-item.active {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        /* Chat Area */
+        .chat-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #14B8A6, #06B6D4);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bot-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .bot-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bot-status {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 400px;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: var(--gradient-3);
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1rem 1.25rem;
+            border-radius: 15px;
+            border-top-left-radius: 5px;
+        }
+
+        .message.user .message-content {
+            background: var(--gradient-1);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 5px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            padding: 1rem;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .quick-prompts h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prompt-btn {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .prompt-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .tips-card {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(6, 182, 212, 0.15));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            padding: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .tips-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #14B8A6, #06B6D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .tip-number {
+            background: linear-gradient(135deg, #14B8A6, #06B6D4);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo" onclick="window.location.href='connected-profile.html'">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="200" height="200" rx="40" fill="#0A1628"/>
+                        <defs>
+                            <linearGradient id="tealGradient5" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="turquoiseGradient5" x1="100%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="greenGradient5" x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <path d="M -35,-35 Q -35,0 0,0 T 35,35 Q 35,0 0,0 T -35,-35" fill="none" stroke="url(#tealGradient5)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <path d="M 35,-35 Q 35,0 0,0 T -35,35 Q -35,0 0,0 T 35,-35" fill="none" stroke="url(#turquoiseGradient5)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="12" fill="url(#greenGradient5)" opacity="1"/>
+                            <circle cx="-35" cy="-35" r="6" fill="#14B8A6"/>
+                            <circle cx="35" cy="-35" r="6" fill="#06B6D4"/>
+                            <circle cx="-35" cy="35" r="6" fill="#06B6D4"/>
+                            <circle cx="35" cy="35" r="6" fill="#10B981"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="logo-text">ConnectED</div>
+            </div>
+            
+            <div class="nav-icons">
+                <a href="connected-discovery.html" class="nav-icon" title="Discovery">🔍 Discovery</a>
+                <a href="connected-portfolio.html" class="nav-icon" title="Portfolio">📂 Portfolio</a>
+                <a href="connected-ai-helper.html" class="nav-icon active" title="AI Helper">🤖 AI Helper</a>
+                
+                <div class="dropdown-container">
+                    <div class="menu-toggle" onclick="toggleDropdown()" title="More options">⋮</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="window.location.href='connected-profile.html'">
+                            👤 Profile
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-inbox.html'">
+                            💬 Inbox
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-gamification.html'">
+                            🎮 Games
+                        </div>
+                        <div class="dropdown-item" onclick="localStorage.clear(); window.location.href='connected-login.html'">
+                            🚪 Logout
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Chat Area -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="bot-avatar">🤖</div>
+                <div class="bot-info">
+                    <h2>UniBuddy - Your Campus Assistant</h2>
+                    <div class="bot-status">✨ Ready to help with SOPs, tips, and campus guidance!</div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome message -->
+                <div class="message bot">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Hey there! I'm UniBuddy, your friendly campus assistant! 🎉</p>
+                        <br>
+                        <p>I'm here to help you write killer Statements of Purpose that'll make clubs fight over you! 😎</p>
+                        <br>
+                        <p>Just tell me which club you're applying to, and let's create some magic together! ✨</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+
+            <div class="chat-input-area">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Type your message... (e.g., 'Help me write SOP for Tech Club')"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-btn" onclick="sendMessage()">
+                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Quick Prompts -->
+            <div class="sidebar-card quick-prompts">
+                <h3>💡 Quick Prompts</h3>
+                <button class="prompt-btn" onclick="usePrompt('Help me write an SOP for the Tech Club')">
+                    🖥️ Tech Club SOP
+                </button>
+                <button class="prompt-btn" onclick="usePrompt('Create SOP for Photography Club highlighting my creative skills')">
+                    📸 Photography Club SOP
+                </button>
+                <button class="prompt-btn" onclick="usePrompt('Write an SOP for the Dance Club mentioning my passion')">
+                    💃 Dance Club SOP
+                </button>
+                <button class="prompt-btn" onclick="usePrompt('Help with Entrepreneurship Club application')">
+                    🚀 Entrepreneurship Club
+                </button>
+                <button class="prompt-btn" onclick="usePrompt('Review and improve my existing SOP')">
+                    ✏️ Review My SOP
+                </button>
+            </div>
+
+            <!-- Tips -->
+            <div class="tips-card">
+                <h3>🎯 Pro Tips</h3>
+                <div class="tip-item">
+                    <div class="tip-number">1</div>
+                    <p>Be specific about your achievements and experiences</p>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">2</div>
+                    <p>Show genuine passion for the club's activities</p>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">3</div>
+                    <p>Mention how you can contribute to the club</p>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">4</div>
+                    <p>Keep it concise - 200-300 words is perfect!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated AI responses
+        const aiResponses = {
+            tech: [
+                "Great choice! The Tech Club is amazing! 🚀 Let me help you craft an SOP that showcases your technical skills.",
+                "Here's a starter: 'My fascination with technology began when I first wrote 'Hello World' and realized I could create anything with code...'",
+                "Remember to mention: Your programming languages, projects you've built, hackathons attended, and what you want to learn!"
+            ],
+            photography: [
+                "Photography Club - where moments become memories! 📸 Let's capture your passion in words!",
+                "Try this opening: 'Through my lens, I see stories waiting to be told. Photography isn't just about taking pictures; it's about freezing emotions in time...'",
+                "Don't forget to mention your favorite photography style, any equipment you use, and what inspires you!"
+            ],
+            dance: [
+                "Dance Club! Let's make your SOP move to the rhythm! 💃",
+                "How about: 'Dance is my language when words fail. Every beat is a heartbeat, every move tells a story...'",
+                "Include your dance styles, performances, how dance makes you feel, and what you hope to achieve!"
+            ],
+            entrepreneurship: [
+                "Entrepreneurship Club - for future changemakers! 🚀 Let's pitch your passion!",
+                "Start strong: 'I believe every problem is an opportunity in disguise. My entrepreneurial journey began when...'",
+                "Highlight any business ideas, leadership experiences, problem-solving skills, and your vision!"
+            ],
+            general: [
+                "I'd love to help! Which club are you interested in joining? Tell me a bit about yourself and your interests!",
+                "Here's my formula for a killer SOP: Passion + Experience + Future Goals = Success! Let's work on yours!",
+                "Remember: Be authentic, be specific, and show how you'll add value to the club!"
+            ]
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                hideTyping();
+                const response = generateResponse(message);
+                addMessage(response, 'bot');
+            }, 1500);
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = sender === 'user' ? '👤' : '🤖';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <p>${text}</p>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('tech') || lowerMessage.includes('coding') || lowerMessage.includes('programming')) {
+                return aiResponses.tech[Math.floor(Math.random() * aiResponses.tech.length)];
+            } else if (lowerMessage.includes('photo')) {
+                return aiResponses.photography[Math.floor(Math.random() * aiResponses.photography.length)];
+            } else if (lowerMessage.includes('dance')) {
+                return aiResponses.dance[Math.floor(Math.random() * aiResponses.dance.length)];
+            } else if (lowerMessage.includes('entrepreneur') || lowerMessage.includes('business')) {
+                return aiResponses.entrepreneurship[Math.floor(Math.random() * aiResponses.entrepreneurship.length)];
+            } else {
+                return aiResponses.general[Math.floor(Math.random() * aiResponses.general.length)];
+            }
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').classList.add('active');
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').classList.remove('active');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function usePrompt(prompt) {
+            document.getElementById('chatInput').value = prompt;
+            sendMessage();
+        }
+
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdownContainer = document.querySelector('.dropdown-container');
+            const dropdown = document.getElementById('dropdownMenu');
+            
+            if (!dropdownContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

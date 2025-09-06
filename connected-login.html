@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectED - Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #3B82F6;
+            --primary-purple: #7C3AED;
+            --secondary-turquoise: #06B6D4;
+            --secondary-coral: #F87171;
+            --accent-yellow: #FACC15;
+            --bg-dark: #0F0F0F;
+            --bg-gray: #1E1E1E;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        .background-gradient {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: linear-gradient(
+                -45deg,
+                var(--bg-dark) 0%,
+                var(--bg-gray) 25%,
+                rgba(59, 130, 246, 0.1) 50%,
+                rgba(124, 58, 237, 0.1) 75%,
+                var(--bg-dark) 100%
+            );
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: float 10s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--primary-blue), transparent);
+            top: -200px;
+            right: -100px;
+            animation-duration: 15s;
+        }
+
+        .orb2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, var(--primary-purple), transparent);
+            bottom: -150px;
+            left: -100px;
+            animation-duration: 12s;
+            animation-delay: 2s;
+        }
+
+        .orb3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--secondary-turquoise), transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 18s;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px);
+            }
+            50% {
+                transform: translateY(20px) translateX(-30px);
+            }
+            75% {
+                transform: translateY(-20px) translateX(-20px);
+            }
+        }
+
+        /* Main container */
+        .login-container {
+            width: 90%;
+            max-width: 480px;
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            }
+            50% {
+                box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-blue);
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.1),
+                inset 0 0 20px rgba(59, 130, 246, 0.05);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Role selector */
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .role-pill {
+            padding: 16px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .role-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .role-pill.selected {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-color: transparent;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            animation: selectPulse 0.4s ease;
+        }
+
+        @keyframes selectPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .role-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .role-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .role-label {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Login button */
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-top: 32px;
+            letter-spacing: 0.5px;
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading state */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* OAuth section */
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+            position: relative;
+            padding: 0 16px;
+            background: rgba(30, 30, 30, 0.8);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .oauth-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .oauth-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .oauth-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .oauth-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Success animation */
+        .success-check {
+            display: none;
+            width: 60px;
+            height: 60px;
+            margin: 20px auto;
+            animation: successScale 0.5s ease;
+        }
+
+        @keyframes successScale {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-check.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <div class="login-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="50" height="50" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="200" height="200" rx="40" fill="#0A1628"/>
+                        <defs>
+                            <linearGradient id="tealGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="turquoiseGradient1" x1="100%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="greenGradient1" x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <path d="M -35,-35 Q -35,0 0,0 T 35,35 Q 35,0 0,0 T -35,-35" fill="none" stroke="url(#tealGradient1)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <path d="M 35,-35 Q 35,0 0,0 T -35,35 Q -35,0 0,0 T 35,-35" fill="none" stroke="url(#turquoiseGradient1)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="12" fill="url(#greenGradient1)" opacity="1"/>
+                            <circle cx="-35" cy="-35" r="6" fill="#14B8A6"/>
+                            <circle cx="35" cy="-35" r="6" fill="#06B6D4"/>
+                            <circle cx="-35" cy="35" r="6" fill="#06B6D4"/>
+                            <circle cx="35" cy="35" r="6" fill="#10B981"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="logo-text">ConnectED</div>
+            </div>
+            <div class="tagline">Connect • Collaborate • Create</div>
+        </div>
+
+        <!-- Glass Card -->
+        <div class="glass-card">
+            <!-- Tab Buttons -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                <button type="button" id="loginTab" class="tab-btn" onclick="showLoginForm()" 
+                        style="flex: 1; padding: 12px; background: linear-gradient(135deg, #3B82F6, #7C3AED); 
+                               border: none; border-radius: 12px; color: white; font-weight: 600; 
+                               cursor: pointer; transition: all 0.3s;">
+                    Login
+                </button>
+                <button type="button" id="registerTab" class="tab-btn" onclick="showRegisterForm()"
+                        style="flex: 1; padding: 12px; background: rgba(255, 255, 255, 0.1); 
+                               border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; 
+                               color: white; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                    Register
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" style="display: block;">
+                <!-- SAP ID Input -->
+                <div class="form-group">
+                    <label for="sapId">SAP ID</label>
+                    <input 
+                        type="text" 
+                        id="sapId" 
+                        class="input-field" 
+                        placeholder="70522400089"
+                        maxlength="11"
+                        required
+                    >
+                </div>
+
+                <!-- Role Selector -->
+                <div class="form-group">
+                    <label>Select Your Role</label>
+                    <div class="role-selector">
+                        <div class="role-pill" data-role="student">
+                            <div class="role-content">
+                                <div class="role-icon">🎓</div>
+                                <div class="role-label">Student</div>
+                            </div>
+                        </div>
+                        <div class="role-pill" data-role="club_head">
+                            <div class="role-content">
+                                <div class="role-icon">👥</div>
+                                <div class="role-label">Club Head</div>
+                            </div>
+                        </div>
+                        <div class="role-pill" data-role="faculty">
+                            <div class="role-content">
+                                <div class="role-icon">👨‍🏫</div>
+                                <div class="role-label">Faculty</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-button" id="loginBtn" disabled>
+                    <span id="btnText">Login</span>
+                </button>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="registerForm" style="display: none;">
+                <!-- Name Input -->
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        class="input-field" 
+                        placeholder="John Doe"
+                        required
+                    >
+                </div>
+
+                <!-- Email Input -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="input-field" 
+                        placeholder="john.doe@university.edu"
+                        required
+                    >
+                </div>
+
+                <!-- Team Name Input -->
+                <div class="form-group">
+                    <label for="teamName">Team/Club Name (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="teamName" 
+                        class="input-field" 
+                        placeholder="Tech Innovators"
+                    >
+                </div>
+
+                <!-- SAP ID Input -->
+                <div class="form-group">
+                    <label for="regSapId">SAP ID</label>
+                    <input 
+                        type="text" 
+                        id="regSapId" 
+                        class="input-field" 
+                        placeholder="70522400089"
+                        maxlength="11"
+                        required
+                    >
+                </div>
+
+                <!-- Role Selector for Registration -->
+                <div class="form-group">
+                    <label>Select Your Role</label>
+                    <div class="role-selector">
+                        <div class="role-card" data-role="student">
+                            <div class="role-icon">👨‍🎓</div>
+                            <div class="role-name">Student</div>
+                            <div class="role-desc">Join clubs & communities</div>
+                        </div>
+                        <div class="role-card" data-role="club_head">
+                            <div class="role-icon">👥</div>
+                            <div class="role-name">Club Head</div>
+                            <div class="role-desc">Manage your club</div>
+                        </div>
+                        <div class="role-card" data-role="faculty">
+                            <div class="role-icon">👨‍🏫</div>
+                            <div class="role-name">Faculty</div>
+                            <div class="role-desc">Guide & mentor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit" class="login-button">
+                    <span id="regBtnText">Create Account</span>
+                    <div class="loading-spinner" id="regSpinner"></div>
+                </button>
+            </form>
+
+            <!-- OAuth Section -->
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="oauth-buttons">
+                <button class="oauth-btn" onclick="handleOAuth('google')">
+                    <svg class="oauth-icon" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                </button>
+                <button class="oauth-btn" onclick="handleOAuth('microsoft')">
+                    <svg class="oauth-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
+                    </svg>
+                    Microsoft
+                </button>
+            </div>
+
+            <!-- Success Check (hidden by default) -->
+            <div class="success-check" id="successCheck">
+                <svg viewBox="0 0 60 60" fill="none">
+                    <circle cx="30" cy="30" r="28" stroke="#22C55E" stroke-width="4"/>
+                    <path d="M18 30L26 38L42 22" stroke="#22C55E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize local storage with sample data
+        function initializeData() {
+            if (!localStorage.getItem('connectedUsers')) {
+                const initialUsers = [
+                    {
+                        sapId: '70522400089',
+                        name: 'Rahul Sharma',
+                        role: 'student',
+                        course: 'Computer Science',
+                        year: '3rd Year',
+                        age: 21,
+                        profilePicture: null,
+                        joinedClubs: ['Robotics Club', 'Coding Society'],
+                        xp: 450,
+                        level: 5
+                    },
+                    {
+                        sapId: '70522400090',
+                        name: 'Priya Patel',
+                        role: 'club_head',
+                        clubName: 'Photography Club',
+                        course: 'Design',
+                        year: '4th Year',
+                        age: 22,
+                        profilePicture: null,
+                        membersCount: 45
+                    },
+                    {
+                        sapId: '70522400091',
+                        name: 'Dr. Arun Kumar',
+                        role: 'faculty',
+                        department: 'Computer Science',
+                        designation: 'Associate Professor',
+                        mentoring: ['AI Club', 'Research Society']
+                    }
+                ];
+                localStorage.setItem('connectedUsers', JSON.stringify(initialUsers));
+                console.log('✅ Sample data initialized');
+            }
+        }
+
+        // Role selection
+        let selectedRole = '';
+        const rolePills = document.querySelectorAll('.role-pill');
+        const loginBtn = document.getElementById('loginBtn');
+        const sapIdInput = document.getElementById('sapId');
+
+        rolePills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                rolePills.forEach(p => p.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedRole = this.dataset.role;
+                checkFormValidity();
+            });
+        });
+
+        // Check form validity
+        function checkFormValidity() {
+            const sapId = sapIdInput.value.trim();
+            loginBtn.disabled = !(sapId && selectedRole);
+        }
+
+        sapIdInput.addEventListener('input', checkFormValidity);
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const sapId = sapIdInput.value.trim();
+            const btnText = document.getElementById('btnText');
+            
+            // Show loading state
+            btnText.innerHTML = '<span class="spinner"></span>Logging in...';
+            loginBtn.disabled = true;
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('connectedUsers') || '[]');
+            let user = users.find(u => u.sapId === sapId);
+            
+            // If user doesn't exist, create new user
+            if (!user) {
+                user = {
+                    sapId: sapId,
+                    role: selectedRole,
+                    name: `New User ${sapId.slice(-4)}`,
+                    course: 'Not specified',
+                    year: '1st Year',
+                    age: 18,
+                    profilePicture: null,
+                    joinedAt: new Date().toISOString(),
+                    xp: 0,
+                    level: 1
+                };
+                users.push(user);
+                localStorage.setItem('connectedUsers', JSON.stringify(users));
+                console.log('📝 New user created:', user);
+            } else {
+                // Update role if different
+                if (user.role !== selectedRole) {
+                    user.role = selectedRole;
+                    const updatedUsers = users.map(u => u.sapId === sapId ? user : u);
+                    localStorage.setItem('connectedUsers', JSON.stringify(updatedUsers));
+                }
+            }
+            
+            // Store current session
+            const session = {
+                user: user,
+                loginTime: new Date().toISOString(),
+                role: selectedRole
+            };
+            localStorage.setItem('currentSession', JSON.stringify(session));
+            
+            // Show success
+            btnText.textContent = 'Success!';
+            document.getElementById('successCheck').classList.add('show');
+            
+            console.log('✅ Login successful!');
+            console.log('👤 Current user:', user);
+            console.log('📊 All users:', users);
+            
+            // Redirect to profile setup
+            setTimeout(() => {
+                window.location.href = 'connected-profile-setup.html';
+                
+                // Reset form
+                sapIdInput.value = '';
+                rolePills.forEach(p => p.classList.remove('selected'));
+                selectedRole = '';
+                btnText.textContent = 'Login';
+                loginBtn.disabled = true;
+                document.getElementById('successCheck').classList.remove('show');
+            }, 1000);
+        });
+
+        // Handle OAuth login
+        function handleOAuth(provider) {
+            const session = {
+                user: {
+                    name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
+                    role: 'student',
+                    provider: provider,
+                    loginTime: new Date().toISOString()
+                }
+            };
+            localStorage.setItem('currentSession', JSON.stringify(session));
+            alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication would open here.\n\nFor MVP, this would redirect to OAuth provider.`);
+        }
+
+        // Initialize on load
+        initializeData();
+        
+        // Display current data in console
+        console.log('🎮 ConnectED Login System');
+
+        // Form switching functions
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginTab').style.background = 'linear-gradient(135deg, #3B82F6, #7C3AED)';
+            document.getElementById('loginTab').style.border = 'none';
+            document.getElementById('registerTab').style.background = 'rgba(255, 255, 255, 0.1)';
+            document.getElementById('registerTab').style.border = '1px solid rgba(255, 255, 255, 0.2)';
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('registerTab').style.background = 'linear-gradient(135deg, #3B82F6, #7C3AED)';
+            document.getElementById('registerTab').style.border = 'none';
+            document.getElementById('loginTab').style.background = 'rgba(255, 255, 255, 0.1)';
+            document.getElementById('loginTab').style.border = '1px solid rgba(255, 255, 255, 0.2)';
+        }
+
+        // Handle registration form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const teamName = document.getElementById('teamName').value;
+            const sapId = document.getElementById('regSapId').value;
+            const selectedRole = document.querySelector('#registerForm .role-card.selected');
+            
+            if (!selectedRole) {
+                alert('Please select a role');
+                return;
+            }
+
+            // Create user object
+            const newUser = {
+                fullName,
+                email,
+                teamName,
+                sapId,
+                role: selectedRole.dataset.role,
+                registeredAt: new Date().toISOString()
+            };
+
+            // Store in localStorage
+            let users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            users.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+            // Auto-login after registration
+            const sessionData = {
+                user: newUser,
+                sapId: sapId,
+                role: selectedRole.dataset.role,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('currentSession', JSON.stringify(sessionData));
+            localStorage.setItem('currentUser', JSON.stringify(sessionData));
+
+            alert('Registration successful! Redirecting to profile setup...');
+            
+            // Redirect to profile setup
+            setTimeout(() => {
+                window.location.href = 'connected-profile-setup.html';
+            }, 1000);
+        });
+
+        // Add role selection for registration form
+        document.querySelectorAll('#registerForm .role-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#registerForm .role-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        console.log('📚 Stored Users:', JSON.parse(localStorage.getItem('connectedUsers') || '[]'));
+        console.log('🔐 Current Session:', JSON.parse(localStorage.getItem('currentSession') || 'null'));
+    </script>
+</body>
+</html>

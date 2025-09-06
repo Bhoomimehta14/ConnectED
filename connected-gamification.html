@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamification Hub - ConnectED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* ConnectED Theme Colors */
+            --primary-blue: #3B82F6;
+            --primary-purple: #7C3AED;
+            --secondary-turquoise: #06B6D4;
+            --secondary-teal: #14B8A6;
+            --secondary-green: #10B981;
+            --secondary-coral: #F87171;
+            --accent-yellow: #FACC15;
+            --bg-dark: #0A1628;
+            --bg-gray: #1A2332;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #14B8A6, #06B6D4);
+            --gradient-secondary: linear-gradient(135deg, #06B6D4, #10B981);
+            --gradient-mixed: linear-gradient(135deg, #14B8A6, #06B6D4, #10B981);
+            --gradient-purple: linear-gradient(135deg, #3B82F6, #7C3AED);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0A1628 0%, #1A2332 100%);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+        }
+
+        /* Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(20, 184, 166, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link:hover {
+            background: rgba(20, 184, 166, 0.2);
+            border-color: rgba(20, 184, 166, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-primary);
+            border: none;
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .menu-toggle {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(20, 184, 166, 0.2);
+            border-color: rgba(20, 184, 166, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(20, 184, 166, 0.2);
+            color: white;
+        }
+
+        .dropdown-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .category-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .category-btn:hover {
+            background: rgba(20, 184, 166, 0.15);
+            border-color: rgba(20, 184, 166, 0.3);
+            transform: translateX(5px);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2));
+            border-color: rgba(20, 184, 166, 0.4);
+        }
+
+        .category-icon {
+            font-size: 20px;
+        }
+
+        .category-name {
+            flex: 1;
+        }
+
+        .category-count {
+            background: rgba(20, 184, 166, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #14B8A6;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(20, 184, 166, 0.3);
+            box-shadow: 0 8px 20px rgba(20, 184, 166, 0.2);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .game-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .difficulty-easy {
+            color: #10B981;
+        }
+
+        .difficulty-medium {
+            color: #FACC15;
+        }
+
+        .difficulty-hard {
+            color: #F87171;
+        }
+
+        .play-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .play-btn:hover {
+            background: var(--gradient-secondary);
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .view-all-btn {
+            color: #14B8A6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            color: #06B6D4;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(20, 184, 166, 0.2);
+        }
+
+        .rank-badge {
+            width: 30px;
+            height: 30px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #C0C0C0, #808080);
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .player-score {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .points-badge {
+            background: rgba(20, 184, 166, 0.2);
+            color: #14B8A6;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* AI Helper Button */
+        .ai-helper-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(20, 184, 166, 0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-helper-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(20, 184, 166, 0.5);
+            background: var(--gradient-secondary);
+        }
+
+        .ai-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ai-helper-btn:hover .ai-tooltip {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo" onclick="window.location.href='connected-profile.html'">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="200" height="200" rx="40" fill="#0A1628"/>
+                        <defs>
+                            <linearGradient id="tealGradient8" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="turquoiseGradient8" x1="100%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="greenGradient8" x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(100, 100)">
+                            <path d="M -35,-35 Q -35,0 0,0 T 35,35 Q 35,0 0,0 T -35,-35" fill="none" stroke="url(#tealGradient8)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <path d="M 35,-35 Q 35,0 0,0 T -35,35 Q -35,0 0,0 T 35,-35" fill="none" stroke="url(#turquoiseGradient8)" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="12" fill="url(#greenGradient8)" opacity="1"/>
+                            <circle cx="-35" cy="-35" r="6" fill="#14B8A6"/>
+                            <circle cx="35" cy="-35" r="6" fill="#06B6D4"/>
+                            <circle cx="-35" cy="35" r="6" fill="#06B6D4"/>
+                            <circle cx="35" cy="35" r="6" fill="#10B981"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="logo-text">ConnectED</div>
+            </div>
+            
+            <div class="nav-links">
+                <a href="connected-discovery.html" class="nav-link">🔍 Discovery</a>
+                <a href="connected-portfolio.html" class="nav-link">📂 Portfolio</a>
+                <a href="connected-ai-helper.html" class="nav-link">🤖 AI Helper</a>
+                
+                <div class="dropdown-container">
+                    <div class="menu-toggle" onclick="toggleDropdown()" title="More options">⋮</div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" onclick="window.location.href='connected-profile.html'">
+                            👤 Profile
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='connected-inbox.html'">
+                            💬 Inbox
+                        </div>
+                        <div class="dropdown-item active" onclick="window.location.href='connected-gamification.html'">
+                            🎮 Games
+                        </div>
+                        <div class="dropdown-item" onclick="localStorage.clear(); window.location.href='connected-login.html'">
+                            🚪 Logout
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">🎮 Game Categories</h3>
+            <div class="game-categories">
+                <button class="category-btn active" onclick="filterGames('all')">
+                    <span class="category-icon">🎯</span>
+                    <span class="category-name">All Games</span>
+                    <span class="category-count">12</span>
+                </button>
+                <button class="category-btn" onclick="filterGames('skill')">
+                    <span class="category-icon">💡</span>
+                    <span class="category-name">Skill Development</span>
+                    <span class="category-count">4</span>
+                </button>
+                <button class="category-btn" onclick="filterGames('quiz')">
+                    <span class="category-icon">🧠</span>
+                    <span class="category-name">Educational Quizzes</span>
+                    <span class="category-count">3</span>
+                </button>
+                <button class="category-btn" onclick="filterGames('challenge')">
+                    <span class="category-icon">🏆</span>
+                    <span class="category-name">Daily Challenges</span>
+                    <span class="category-count">3</span>
+                </button>
+                <button class="category-btn" onclick="filterGames('leaderboard')">
+                    <span class="category-icon">📊</span>
+                    <span class="category-name">Leaderboards</span>
+                    <span class="category-count">2</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <div class="section-header">
+                <h1 class="section-title">Gamification Hub</h1>
+                <p class="section-subtitle">Level up your skills and compete with peers!</p>
+            </div>
+
+            <!-- Games Grid -->
+            <div class="games-grid">
+                <!-- Game Card 1 -->
+                <div class="game-card">
+                    <div class="game-header">
+                        <h3 class="game-title">Code Breaker</h3>
+                        <span class="game-badge">NEW</span>
+                    </div>
+                    <p class="game-description">Solve programming puzzles and improve your coding logic. Perfect for tech enthusiasts!</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-medium">
+                            <span>🔥</span> Medium
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.8
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 2.3k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+
+                <!-- Game Card 2 -->
+                <div class="game-card">
+                    <h3 class="game-title">Campus Quiz Master</h3>
+                    <p class="game-description">Test your knowledge about campus life, courses, and general trivia.</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-easy">
+                            <span>🌟</span> Easy
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.9
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 5.1k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+
+                <!-- Game Card 3 -->
+                <div class="game-card">
+                    <h3 class="game-title">Design Challenge</h3>
+                    <p class="game-description">Create stunning designs and get feedback from the community.</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-hard">
+                            <span>💎</span> Hard
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.7
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 1.8k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+
+                <!-- Game Card 4 -->
+                <div class="game-card">
+                    <h3 class="game-title">Math Wizard</h3>
+                    <p class="game-description">Sharpen your mathematical skills with fun and challenging problems.</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-medium">
+                            <span>🔥</span> Medium
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.6
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 3.2k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+
+                <!-- Game Card 5 -->
+                <div class="game-card">
+                    <h3 class="game-title">Word Master</h3>
+                    <p class="game-description">Expand your vocabulary and improve your language skills.</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-easy">
+                            <span>🌟</span> Easy
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.8
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 4.5k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+
+                <!-- Game Card 6 -->
+                <div class="game-card">
+                    <h3 class="game-title">Science Lab</h3>
+                    <p class="game-description">Conduct virtual experiments and learn scientific concepts.</p>
+                    <div class="game-meta">
+                        <span class="meta-item difficulty-hard">
+                            <span>💎</span> Hard
+                        </span>
+                        <span class="meta-item">
+                            <span>⭐</span> 4.9
+                        </span>
+                        <span class="meta-item">
+                            <span>👥</span> 2.1k plays
+                        </span>
+                    </div>
+                    <button class="play-btn">Play Now ▶️</button>
+                </div>
+            </div>
+
+            <!-- Leaderboard Section -->
+            <div class="leaderboard-section">
+                <div class="leaderboard-header">
+                    <h2 class="leaderboard-title">
+                        <span>🏆</span>
+                        Top Players This Week
+                    </h2>
+                    <a href="#" class="view-all-btn">View All →</a>
+                </div>
+                <div class="leaderboard-list">
+                    <div class="leaderboard-item">
+                        <span class="rank-badge gold">1</span>
+                        <div class="player-info">
+                            <div class="player-name">Alex Chen</div>
+                            <div class="player-score">Level 42 • Code Breaker Champion</div>
+                        </div>
+                        <span class="points-badge">12,450 XP</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="rank-badge silver">2</span>
+                        <div class="player-info">
+                            <div class="player-name">Sarah Johnson</div>
+                            <div class="player-score">Level 38 • Quiz Master</div>
+                        </div>
+                        <span class="points-badge">11,200 XP</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="rank-badge bronze">3</span>
+                        <div class="player-info">
+                            <div class="player-name">Mike Kumar</div>
+                            <div class="player-score">Level 35 • Design Pro</div>
+                        </div>
+                        <span class="points-badge">10,850 XP</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Helper Button -->
+    <div class="ai-helper-btn" onclick="openAIHelper()">
+        🤖
+        <span class="ai-tooltip">Get game tips from UniBuddy!</span>
+    </div>
+
+    <script>
+        // Filter games by category
+        function filterGames(category) {
+            // Update active button
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.category-btn').classList.add('active');
+            
+            // In a real app, this would filter the games
+            console.log(`Filtering games by: ${category}`);
+        }
+
+        // Open AI Helper
+        function openAIHelper() {
+            alert('UniBuddy: "Need help with a game? I can give you tips, strategies, or even create custom quizzes for you! Just ask me anything!"');
+        }
+
+        // Play game
+        document.querySelectorAll('.play-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const gameTitle = this.closest('.game-card').querySelector('.game-title').textContent;
+                alert(`Launching ${gameTitle}... Get ready to play! 🎮`);
+            });
+        });
+
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdownContainer = document.querySelector('.dropdown-container');
+            const dropdown = document.getElementById('dropdownMenu');
+            
+            if (!dropdownContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
