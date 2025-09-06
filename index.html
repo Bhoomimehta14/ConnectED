@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ConnectED - Campus Networking Platform</title>
-    <meta http-equiv="refresh" content="0; url=./connected-login.html">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -42,10 +41,8 @@
     </div>
     
     <script>
-        // Fallback redirect if meta refresh doesn't work
-        setTimeout(() => {
-            window.location.href = './connected-login.html';
-        }, 2000);
+        // Immediate redirect to login page
+        window.location.href = './connected-login.html';
     </script>
 </body>
 </html>
