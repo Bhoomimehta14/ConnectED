@@ -32,7 +32,7 @@ const server = http.createServer((req, res) => {
 
   // Handle root path - redirect to login
   if (pathname === '/') {
-    pathname = '/connected-login.html';
+    pathname = '/index.html';
   }
 
   // Remove leading slash and resolve file path
@@ -111,8 +111,8 @@ server.listen(port, () => {
   console.log(`   Network: http://0.0.0.0:${port}`);
   console.log('');
   console.log('📋 Available routes:');
-  console.log('   /                     → connected-login.html (redirects)');
-  console.log('   /connected-login.html → Login page');
+  console.log('   /                     → index.html (redirects)');
+  console.log('   /index.html → Login page');
   console.log('   /connected-discovery.html → Main discovery feed');
   console.log('   /connected-profile.html → User profile');
   console.log('');
