@@ -1,36 +1,148 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ConnectED - Campus Networking Platform 🎓
 
-## Getting Started
+A smart platform that helps students discover and join relevant campus clubs, project teams, and faculty-led initiatives based on their interests, skills, and academic goals.
 
-First, run the development server:
+## Features ✨
 
+- **Smart Discovery Feed** - Social media-style feed for campus activities
+- **Club Registration** - Detailed club information, leadership, and positions
+- **Event Registration** - Comprehensive event details with pricing and incentives
+- **AI Assistant (UniBuddy)** - Help with SOPs, tips, and campus guidance
+- **Portfolio Management** - Track interested clubs and activities
+- **Inbox System** - Connect with peers and club communications
+- **Gamification Hub** - Educational games and skill development
+
+## Tech Stack 🛠️
+
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Styling**: Custom CSS with Glassmorphic Design
+- **Storage**: LocalStorage for demo data
+- **Deployment**: Vercel (Static Site)
+
+## Quick Start 🚀
+
+### Local Development
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd hackathon
+
+# Start local development server
 npm run dev
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+python -m http.server 3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Vercel Deployment
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically detect this as a static site
+3. Deploy with default settings
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The `vercel.json` configuration ensures proper routing:
+- Root path `/` redirects to login page
+- All static assets are served correctly
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure 📁
 
-## Learn More
+```
+hackathon/
+├── connected-login.html          # Entry point / Login page
+├── connected-profile-setup.html  # Profile creation
+├── connected-discovery.html      # Main feed & discovery
+├── connected-portfolio.html      # User's interested clubs
+├── connected-inbox.html          # Messages & communications
+├── connected-ai-helper.html      # UniBuddy AI assistant
+├── connected-gamification.html   # Educational games
+├── connected-profile.html        # User profile & settings
+├── connected-logo.svg           # App logo
+├── index.html                   # Root redirect page
+├── vercel.json                  # Vercel configuration
+└── package.json                 # Project metadata
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Design System 🎨
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Color Palette
+- **Primary**: Teal (#14B8A6), Turquoise (#06B6D4)
+- **Secondary**: Green (#10B981), Coral (#F87171)
+- **Accent**: Yellow (#FACC15), Blue (#3B82F6), Purple (#7C3AED)
+- **Background**: Dark Navy (#0A1628) to (#1A2332)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### UI Elements
+- **Glassmorphic Cards**: backdrop-filter with blur effects
+- **Gradient Buttons**: Multi-color gradients with hover effects
+- **Grid Backgrounds**: Subtle overlay patterns
+- **Smooth Animations**: CSS transitions and keyframes
 
-## Deploy on Vercel
+## Navigation Structure 🧭
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Main Navigation:**
+- Discovery (Feed)
+- Portfolio (Interested Clubs)
+- AI Helper (UniBuddy)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Dropdown Menu (⋮):**
+- Profile
+- Inbox
+- Games
+- Logout
+
+## Key Features Detail 📋
+
+### Club Registration
+- Club description and statistics
+- Current leadership with real names
+- Open positions with requirements
+- Application form with SOP
+- Position preference selection
+
+### Event Registration
+- Event details (date, venue, duration)
+- Pricing information and early bird offers
+- Incentives (prizes, certificates, networking)
+- Speaker information
+- Registration form with team details
+
+### AI Assistant (UniBuddy)
+- SOP writing assistance
+- Quick prompts for different clubs
+- Pro tips with glassmorphic design
+- Integration across the platform
+
+## Demo Data 💾
+
+The platform uses localStorage for demo purposes with:
+- User profiles and authentication
+- Club data and memberships
+- Event registrations
+- Message threads
+- Game progress
+
+## Contributing 🤝
+
+This is a hackathon POC. For improvements:
+1. Fork the repository
+2. Create feature branch
+3. Make changes
+4. Test locally
+5. Submit pull request
+
+## Deployment Status 🔴
+
+Ready for Vercel deployment as a static site.
+
+**Live Demo**: [Deploy to Vercel](https://vercel.com/new)
+
+## Author 👩‍💻
+
+**Bhoomi Mehta**
+- Email: bhoomime14@gmail.com
+- GitHub: [@bhoomime14](https://github.com/bhoomime14)
+
+## License 📄
+
+MIT License - see LICENSE file for details.
+
+---
+
+Built with ❤️ for campus networking and student engagement.

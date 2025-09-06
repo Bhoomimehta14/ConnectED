@@ -1,0 +1,29 @@
+# Next.js files (we're not using Next.js for static deployment)
+.next/
+src/
+backend/
+backendconfig/
+backendcontrollers/
+backendmodels/
+backendroutes/
+campusrebel/
+campus-rebel/
+node_modules/
+
+# Development files
+*.config.*
+.eslintrc*
+tsconfig.json
+next-env.d.ts
+eslint.config.mjs
+postcss.config.mjs
+WEBSTORM_GUIDE.md
+frontend-setup.html
+login.html
+logo-showcase.html
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+*.log
