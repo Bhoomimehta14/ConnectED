@@ -24,8 +24,8 @@ A smart platform that helps students discover and join relevant campus clubs, pr
 ### Local Development
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd hackathon
+git clone https://github.com/Bhoomimehta14/ConnectED.git
+cd ConnectED
 
 # Start local development server
 npm run dev
